@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliment Generator</title>
+
+    <!-- Load Google Fonts: Nunito for compliments and Lato for UI text -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- Embedded CSS (style.css equivalent) -->
+    <style>
+        /* CSS Reset and Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Color Palette Definition */
+        :root {
+            --bg-color: #F8F9FA;          /* Light Gray (for box) */
+            --text-color: #212529;        /* Charcoal */
+            --accent-color: #FF6B6B;      /* Living Coral */
+            --hover-color: #FFD166;       /* Sunny Yellow */
+            --font-ui: 'Lato', sans-serif;
+            --font-compliment: 'Nunito', sans-serif;
+        }
+
+        /* Background Gradient Animation */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Body and Layout Centering (Flexbox) */
+        body {
+            /* Animated gradient background */
+            background: linear-gradient(-45deg, #FF6B6B, #FFD166, #A8DADC, #457B9D);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center; /* Horizontal centering */
+            align-items: center;     /* Vertical centering */
+            padding: 20px;
+            font-family: var(--font-ui);
+            line-height: 1.6;
+        }
+
+        /* Main Container Styling */
+        .compliment-box {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            /* Increased min-height to prevent resizing */
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Pushes button to bottom */
+            /* Subtle, modern box shadow */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .compliment-box:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Application Title */
+        .app-title {
+            font-family: var(--font-ui);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        /* Compliment Display Styling */
+        #compliment-display {
+            font-family: var(--font-compliment);
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            /* Set a fixed minimum height to prevent box size changes */
+            min-height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+
+            /* Transition for the fade effect */
+            opacity: 1;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        /* Class for the fade-out effect during transition */
+        .fade-out {
+            opacity: 0;
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 600px) {
+            .compliment-box {
+                padding: 25px 20px;
+                min-height: 350px; /* Adjust height for smaller screens */
+            }
+            #compliment-display {
+                font-size: 1.25rem;
+                min-height: 200px;
+            }
+            .app-title {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* Button Styling */
+        #generate-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%; /* Full width button on smaller screens */
+            max-width: 300px;
+            align-self: center; /* Center the button when using flex-direction: column */
+            transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth color transition */
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        #generate-btn:hover {
+            background-color: var(--hover-color); /* Sunny Yellow on hover */
+            color: var(--text-color);
+            box-shadow: 0 4px 12px rgba(255, 209, 102, 0.5);
+            transform: translateY(-2px);
+        }
+
+        #generate-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <main class="compliment-box">
+        <h1 class="app-title">⭐ Daily Boost Generator ⭐</h1>
+
+        <!-- Compliment Display Area -->
+        <div id="compliment-display">
+            Click the button below to receive an encouraging compliment!
+        </div>
+
+        <!-- Button to generate a new compliment -->
+        <button id="generate-btn">
+            Get a New Compliment
+        </button>
+    </main>
+
+    <!-- Embedded JavaScript (script.js equivalent) -->
+    <script>
+        // Array of 100 unique and family-friendly compliments
+        const compliments = [
+            "Your ability to listen is a true gift to everyone around you.",
+            "You have an incredible mind and your ideas deserve to be heard.",
+            "The kindness you show others is a beacon of light.",
+            "You handle challenges with grace and resilience.",
+            "Your energy is contagious in the best possible way.",
+            "You make the world a more interesting and beautiful place just by being in it.",
+            "I admire your dedication and commitment to your goals.",
+            "You have a fantastic sense of humor, and you know how to brighten a room.",
+            "Never stop being the wonderfully authentic person that you are.",
+            "Seeing you succeed is genuinely inspiring.",
+            "Your smile can change someone's entire day.",
+            "You are deeply appreciated, even if it's not said enough.",
+            "You look like you know how to build a fire with nothing but friction.",
+            "You're the human equivalent of a double rainbow.",
+            "Your ability to multitask is probably just showboating, but I'm impressed!",
+            "If you were a potato, you'd be a sweet potato.",
+            "You have the perfect amount of chill.",
+            "You make rainy days feel like cozy sweater weather.",
+            "Your brain is like a beautiful, well-organized library.",
+            "You are proof that good things happen to people who work hard.",
+            "You’ve got this, and if you don’t, you’ll figure it out quickly.",
+            "Your laugh is a gift to humanity.",
+            "You’re definitely on the 'Nice' list this year.",
+            "You are better than a freshly baked cookie.",
+            "You are one smooth-operating human being.",
+            "You smell faintly of victory and cinnamon rolls.",
+            "You're not weird, you're a limited edition.",
+            "You make spreadsheets look exciting.",
+            "I hope you trip, but only over money.",
+            "You have the courage of a house cat protecting its favorite toy.",
+            "You're like a highly optimized piece of software.",
+            "You could teach a masterclass in being awesome.",
+            "Your pet probably thinks you're a superhero, and they are right.",
+            "You’re the reason they invented the high-five.",
+            "Your fashion choices are always on point, even if you’re in pajamas.",
+            "You’re the one who remembers to feed the cat.",
+            "You have the focus of a laser pointer.",
+            "You could make a mime blush with your charisma.",
+            "Your positive attitude is the best accessory.",
+            "You’re so good at being you, it’s honestly impressive.",
+            "If you were a season, you’d be a perfect autumn afternoon.",
+            "You are basically a celebrity in my book.",
+            "Your taste in music/movies/books is impeccable.",
+            "You're the person everyone wants on their team.",
+            "You are a stellar conversationalist.",
+            "You handle stress better than a professional tennis player.",
+            "You should be cloned, but only for good purposes.",
+            "You are smarter than you look, which is saying something.",
+            "Your life is going to be amazing, and I’m glad I get to see it.",
+            "You have a knack for turning ordinary moments into special ones.",
+            "You deserve a standing ovation for your sheer effort.",
+            "You’re definitely cooler than a cucumber.",
+            "You’re not just a star, you're the whole galaxy.",
+            "Your memory is shockingly reliable.",
+            "You have the determination of a toddler trying to reach a cookie jar.",
+            "You're the best thing since sliced bread, maybe better.",
+            "You make hard things look easy.",
+            "If brilliance was a crime, you'd be serving a life sentence.",
+            "You’re basically a genius in disguise.",
+            "Your commitment to quality is admirable.",
+            "You’re always ready for an adventure.",
+            "You’re a good egg.",
+            "You light up the room just by entering it.",
+            "You’re more interesting than a treasure map.",
+            "You have fantastic posture.",
+            "You are surprisingly good at that thing you tried once.",
+            "You inspire me to be less lazy.",
+            "Your hair looks really good today.",
+            "You could talk your way out of a paper bag, and then probably sell the bag.",
+            "You're the glue that holds things together.",
+            "You have an amazing moral compass.",
+            "You are exceptionally good at finding things.",
+            "Your integrity shines brighter than a diamond.",
+            "You are the main character in this story.",
+            "You're not just smart, you're clever.",
+            "You should write a book, I'd read it.",
+            "You have the patience of a saint (most of the time).",
+            "You are a powerhouse of potential.",
+            "You deserve all the snacks.",
+            "You are wonderfully eccentric.",
+            "You manage to look elegant even when eating spaghetti.",
+            "You possess great power and great responsibility.",
+            "You're like a hidden track on an album: a pleasant surprise.",
+            "You have mastered the art of being yourself.",
+            "You are the reason for that little spark of joy in my day.",
+            "Your ideas are like tiny, brilliant sparks.",
+            "You make complexity understandable.",
+            "You’re always on time (or at least, you try really hard).",
+            "Your kindness is not weakness; it is your strength.",
+            "You’re the definition of 'effortlessly cool'.",
+            "You’re making a real difference, even if it feels small.",
+            "You have a knack for comforting people.",
+            "You are a human Swiss Army knife of skills.",
+            "You are more reliable than a sunrise.",
+            "You make even mundane tasks seem exciting.",
+            "You're a great example of a person who never gives up.",
+            "You are simply radiant.",
+            "Your perspective is incredibly valuable.",
+            "You deserve a break and a large cup of tea.",
+            "You could sell ice to an Eskimo (but you'd probably just give it to them).",
+            "You bring out the best in others.",
+            "You are a true original."
+        ];
+
+        // Function to get a random compliment from the array
+        function getRandomCompliment() {
+            // Generate a random index based on the array length
+            const randomIndex = Math.floor(Math.random() * compliments.length);
+            // Return the compliment at the random index
+            return compliments[randomIndex];
+        }
+
+        // Function to update the compliment displayed on the screen with a fade transition
+        function displayNewCompliment() {
+            const displayElement = document.getElementById('compliment-display');
+            const button = document.getElementById('generate-btn');
+
+            // Disable button during transition to prevent rapid clicks
+            button.disabled = true;
+
+            // 1. Fade out the current text (transition defined in CSS)
+            displayElement.classList.add('fade-out');
+
+            // Use a short delay to allow the fade-out transition to complete
+            setTimeout(() => {
+                // 2. Get a new random compliment
+                const newCompliment = getRandomCompliment();
+
+                // 3. Update the text content while invisible
+                displayElement.textContent = newCompliment;
+
+                // 4. Fade the new text back in
+                displayElement.classList.remove('fade-out');
+                
+                // Re-enable the button after transition is complete
+                button.disabled = false;
+            }, 200); // 200ms matches the transition speed defined in the CSS
+        }
+
+        // Wait until the entire HTML document is fully loaded before attaching listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get the button element
+            const button = document.getElementById('generate-btn');
+
+            // Attach the click event listener to the button
+            button.addEventListener('click', displayNewCompliment);
+
+            // Display an initial random compliment when the page loads
+            displayNewCompliment();
+        });
+
+    </script>
+</body>
+</html>
