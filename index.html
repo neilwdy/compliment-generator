@@ -25,11 +25,10 @@
             --card-height: 490px; /* Standard playing card ratio approx 2.5 x 3.5 */
         }
 
-        /* Animated Background with Floating Elements */
+        /* Night Sky Background with Stars */
         body {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background-color: #050505;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -41,13 +40,7 @@
             position: relative;
         }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Decorative background "bubbles" */
+        /* Container for the starry background */
         .bg-decoration {
             position: absolute;
             width: 100%;
@@ -58,17 +51,18 @@
             overflow: hidden;
         }
 
-        .bubble {
+        /* Individual Star Styling */
+        .star {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
+            background: white;
             border-radius: 50%;
-            bottom: -100px;
-            animation: float 20s infinite linear;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
         }
 
-        @keyframes float {
-            from { transform: translateY(0) rotate(0deg); opacity: 1; }
-            to { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
 
         /* Playing Card Styling */
@@ -78,7 +72,7 @@
             height: var(--card-height);
             background: white;
             border-radius: 18px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             padding: 20px;
             display: flex;
             flex-direction: column;
@@ -87,6 +81,7 @@
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             margin-bottom: 30px;
             user-select: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .card-container:hover {
@@ -167,7 +162,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             color: white;
             display: flex;
             align-items: center;
@@ -198,7 +193,7 @@
 </head>
 <body>
 
-    <div class="bg-decoration" id="bubbles"></div>
+    <div class="bg-decoration" id="star-field"></div>
 
     <div class="card-container" id="card">
         <div class="corner-icon top-right" id="icon-tr">✨</div>
@@ -434,24 +429,39 @@
             showContent(joke.s, "Joke", joke.p);
         });
 
-        // Background bubble generator
-        function createBubbles() {
-            const container = document.getElementById('bubbles');
-            for(let i=0; i<15; i++) {
-                const b = document.createElement('div');
-                b.className = 'bubble';
-                const size = Math.random() * 60 + 20 + 'px';
-                b.style.width = size;
-                b.style.height = size;
-                b.style.left = Math.random() * 100 + '%';
-                b.style.animationDelay = Math.random() * 10 + 's';
-                b.style.animationDuration = (Math.random() * 10 + 10) + 's';
-                container.appendChild(b);
+        // Background star generator
+        function createStars() {
+            const container = document.getElementById('star-field');
+            const starCount = 150;
+            
+            for(let i=0; i<starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random position
+                const x = Math.random() * 100 + '%';
+                const y = Math.random() * 100 + '%';
+                
+                // Random size (some small, some slightly larger)
+                const size = (Math.random() * 2 + 1) + 'px';
+                
+                // Random animation duration
+                const duration = (Math.random() * 3 + 2) + 's';
+                const delay = (Math.random() * 5) + 's';
+                
+                star.style.left = x;
+                star.style.top = y;
+                star.style.width = size;
+                star.style.height = size;
+                star.style.setProperty('--duration', duration);
+                star.style.animationDelay = delay;
+                
+                container.appendChild(star);
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            createBubbles();
+            createStars();
             updateSuits();
         });
     </script>
