@@ -3,174 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compliment Generator</title>
+    <title>Compliment & Joke Card</title>
 
-    <!-- Load Google Fonts: Nunito for compliments and Lato for UI text -->
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Nunito:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Load Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Nunito:wght@700;800&family=Bungee&display=swap" rel="stylesheet">
 
-    <!-- Embedded CSS (style.css equivalent) -->
     <style>
-        /* CSS Reset and Global Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Color Palette Definition */
         :root {
-            --bg-color: #F8F9FA;          /* Light Gray (for box) */
-            --text-color: #212529;        /* Charcoal */
-            --accent-color: #FF6B6B;      /* Living Coral */
-            --hover-color: #FFD166;       /* Sunny Yellow */
+            --text-color: #212529;
+            --accent-coral: #FF6B6B;
+            --accent-blue: #457B9D;
             --font-ui: 'Lato', sans-serif;
-            --font-compliment: 'Nunito', sans-serif;
+            --font-display: 'Nunito', sans-serif;
+            --card-width: 350px;
+            --card-height: 490px; /* Standard playing card ratio approx 2.5 x 3.5 */
         }
 
-        /* Background Gradient Animation */
+        /* Animated Background with Floating Elements */
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: var(--font-ui);
+            overflow-x: hidden;
+            position: relative;
+        }
+
         @keyframes gradientShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* Body and Layout Centering (Flexbox) */
-        body {
-            /* Animated gradient background */
-            background: linear-gradient(-45deg, #FF6B6B, #FFD166, #A8DADC, #457B9D);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center; /* Horizontal centering */
-            align-items: center;     /* Vertical centering */
-            padding: 20px;
-            font-family: var(--font-ui);
-            line-height: 1.6;
+        /* Decorative background "bubbles" */
+        .bg-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        /* Main Container Styling */
-        .compliment-box {
+        .bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            bottom: -100px;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0) rotate(0deg); opacity: 1; }
+            to { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Playing Card Styling */
+        .card-container {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
             background: white;
-            padding: 40px;
-            border-radius: 12px;
-            max-width: 500px;
-            width: 100%;
-            text-align: center;
-            /* Increased min-height to prevent resizing */
-            min-height: 400px;
+            border-radius: 18px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Pushes button to bottom */
-            /* Subtle, modern box shadow */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 3px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease;
-        }
-
-        .compliment-box:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Application Title */
-        .app-title {
-            font-family: var(--font-ui);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-color);
-            margin-bottom: 20px;
-        }
-
-        /* Compliment Display Styling */
-        #compliment-display {
-            font-family: var(--font-compliment);
-            font-size: 1.75rem;
-            font-weight: 800;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             margin-bottom: 30px;
-            /* Set a fixed minimum height to prevent box size changes */
-            min-height: 250px;
+            user-select: none;
+        }
+
+        .card-container:hover {
+            transform: scale(1.02) rotate(1deg);
+        }
+
+        /* Corner "Suits" */
+        .corner-icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-color);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
-
-            /* Transition for the fade effect */
-            opacity: 1;
-            transition: opacity 0.2s ease-in-out;
-        }
-
-        /* Class for the fade-out effect during transition */
-        .fade-out {
-            opacity: 0;
-        }
-
-        /* Responsive adjustments for smaller screens */
-        @media (max-width: 600px) {
-            .compliment-box {
-                padding: 25px 20px;
-                min-height: 350px; /* Adjust height for smaller screens */
-            }
-            #compliment-display {
-                font-size: 1.25rem;
-                min-height: 200px;
-            }
-            .app-title {
-                font-size: 1.2rem;
-            }
-        }
-
-        /* Button Styling */
-        #generate-btn {
-            background-color: var(--accent-color);
+            font-size: 1.5rem;
             color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%; /* Full width button on smaller screens */
-            max-width: 300px;
-            align-self: center; /* Center the button when using flex-direction: column */
-            transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth color transition */
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+        }
+
+        .top-right { top: 15px; right: 15px; }
+        .bottom-left { bottom: 15px; left: 15px; transform: rotate(180deg); }
+
+        /* Content Area */
+        #content-area {
+            text-align: center;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
+        .type-label {
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 15px;
+            font-weight: 700;
         }
 
-        #generate-btn:hover {
-            background-color: var(--hover-color); /* Sunny Yellow on hover */
+        #main-text {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
             color: var(--text-color);
-            box-shadow: 0 4px 12px rgba(255, 209, 102, 0.5);
-            transform: translateY(-2px);
+            line-height: 1.3;
+            transition: opacity 0.3s ease;
         }
 
-        #generate-btn:active {
+        #punchline {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--accent-blue);
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        #punchline.show {
+            opacity: 1;
             transform: translateY(0);
+        }
+
+        /* Button Controls (Outside the card) */
+        .controls {
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .btn {
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-compliment { background-color: var(--accent-coral); }
+        .btn-joke { background-color: var(--accent-blue); }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .fade-out { opacity: 0; }
+
+        @media (max-width: 400px) {
+            :root {
+                --card-width: 280px;
+                --card-height: 400px;
+            }
+            .controls { flex-direction: column; width: 100%; max-width: 280px; }
+            #main-text { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
 
-    <main class="compliment-box">
-        <h1 class="app-title">⭐ Daily Boost Generator ⭐</h1>
+    <div class="bg-decoration" id="bubbles"></div>
 
-        <!-- Compliment Display Area -->
-        <div id="compliment-display">
-            Click the button below to receive an encouraging compliment!
+    <div class="card-container" id="card">
+        <div class="corner-icon top-right" id="icon-tr">✨</div>
+        <div class="corner-icon bottom-left" id="icon-bl">✨</div>
+        
+        <div id="content-area">
+            <p class="type-label" id="content-type">Welcome</p>
+            <div id="main-text">Pick a card, any card! Ready for a boost?</div>
+            <div id="punchline"></div>
         </div>
+    </div>
 
-        <!-- Button to generate a new compliment -->
-        <button id="generate-btn">
-            Get a New Compliment
+    <div class="controls">
+        <button class="btn btn-compliment" id="btn-compliment">
+            <span>💖</span> Get Compliment
         </button>
-    </main>
+        <button class="btn btn-joke" id="btn-joke">
+            <span>😂</span> Get Joke
+        </button>
+    </div>
 
-    <!-- Embedded JavaScript (script.js equivalent) -->
     <script>
-        // Array of 100 unique and family-friendly compliments
         const compliments = [
             "Your ability to listen is a true gift to everyone around you.",
             "You have an incredible mind and your ideas deserve to be heard.",
@@ -179,150 +229,231 @@
             "Your energy is contagious in the best possible way.",
             "You make the world a more interesting and beautiful place just by being in it.",
             "I admire your dedication and commitment to your goals.",
-            "You have a fantastic sense of humor, and you know how to brighten a room.",
-            "Never stop being the wonderfully authentic person that you are.",
-            "Seeing you succeed is genuinely inspiring.",
-            "Your smile can change someone's entire day.",
-            "You are deeply appreciated, even if it's not said enough.",
-            "You look like you know how to build a fire with nothing but friction.",
             "You're the human equivalent of a double rainbow.",
-            "Your ability to multitask is probably just showboating, but I'm impressed!",
             "If you were a potato, you'd be a sweet potato.",
             "You have the perfect amount of chill.",
             "You make rainy days feel like cozy sweater weather.",
-            "Your brain is like a beautiful, well-organized library.",
-            "You are proof that good things happen to people who work hard.",
-            "You’ve got this, and if you don’t, you’ll figure it out quickly.",
             "Your laugh is a gift to humanity.",
-            "You’re definitely on the 'Nice' list this year.",
             "You are better than a freshly baked cookie.",
-            "You are one smooth-operating human being.",
             "You smell faintly of victory and cinnamon rolls.",
             "You're not weird, you're a limited edition.",
-            "You make spreadsheets look exciting.",
-            "I hope you trip, but only over money.",
             "You have the courage of a house cat protecting its favorite toy.",
             "You're like a highly optimized piece of software.",
             "You could teach a masterclass in being awesome.",
             "Your pet probably thinks you're a superhero, and they are right.",
-            "You’re the reason they invented the high-five.",
-            "Your fashion choices are always on point, even if you’re in pajamas.",
-            "You’re the one who remembers to feed the cat.",
-            "You have the focus of a laser pointer.",
-            "You could make a mime blush with your charisma.",
-            "Your positive attitude is the best accessory.",
-            "You’re so good at being you, it’s honestly impressive.",
-            "If you were a season, you’d be a perfect autumn afternoon.",
-            "You are basically a celebrity in my book.",
-            "Your taste in music/movies/books is impeccable.",
-            "You're the person everyone wants on their team.",
-            "You are a stellar conversationalist.",
-            "You handle stress better than a professional tennis player.",
-            "You should be cloned, but only for good purposes.",
-            "You are smarter than you look, which is saying something.",
-            "Your life is going to be amazing, and I’m glad I get to see it.",
-            "You have a knack for turning ordinary moments into special ones.",
-            "You deserve a standing ovation for your sheer effort.",
-            "You’re definitely cooler than a cucumber.",
-            "You’re not just a star, you're the whole galaxy.",
-            "Your memory is shockingly reliable.",
-            "You have the determination of a toddler trying to reach a cookie jar.",
-            "You're the best thing since sliced bread, maybe better.",
-            "You make hard things look easy.",
-            "If brilliance was a crime, you'd be serving a life sentence.",
-            "You’re basically a genius in disguise.",
-            "Your commitment to quality is admirable.",
-            "You’re always ready for an adventure.",
-            "You’re a good egg.",
-            "You light up the room just by entering it.",
-            "You’re more interesting than a treasure map.",
-            "You have fantastic posture.",
-            "You are surprisingly good at that thing you tried once.",
-            "You inspire me to be less lazy.",
-            "Your hair looks really good today.",
-            "You could talk your way out of a paper bag, and then probably sell the bag.",
-            "You're the glue that holds things together.",
-            "You have an amazing moral compass.",
-            "You are exceptionally good at finding things.",
-            "Your integrity shines brighter than a diamond.",
-            "You are the main character in this story.",
-            "You're not just smart, you're clever.",
-            "You should write a book, I'd read it.",
-            "You have the patience of a saint (most of the time).",
-            "You are a powerhouse of potential.",
-            "You deserve all the snacks.",
-            "You are wonderfully eccentric.",
-            "You manage to look elegant even when eating spaghetti.",
+            "You're the reason they invented the high-five.",
+            "Your fashion choices are always on point.",
+            "You're so good at being you, it's honestly impressive.",
             "You possess great power and great responsibility.",
             "You're like a hidden track on an album: a pleasant surprise.",
-            "You have mastered the art of being yourself.",
-            "You are the reason for that little spark of joy in my day.",
-            "Your ideas are like tiny, brilliant sparks.",
-            "You make complexity understandable.",
-            "You’re always on time (or at least, you try really hard).",
-            "Your kindness is not weakness; it is your strength.",
-            "You’re the definition of 'effortlessly cool'.",
-            "You’re making a real difference, even if it feels small.",
-            "You have a knack for comforting people.",
-            "You are a human Swiss Army knife of skills.",
-            "You are more reliable than a sunrise.",
-            "You make even mundane tasks seem exciting.",
-            "You're a great example of a person who never gives up.",
-            "You are simply radiant.",
-            "Your perspective is incredibly valuable.",
-            "You deserve a break and a large cup of tea.",
-            "You could sell ice to an Eskimo (but you'd probably just give it to them).",
+            "You are the main character in this story.",
+            "You deserve a standing ovation for your sheer effort.",
+            "You make hard things look easy.",
+            "If brilliance was a crime, you'd be serving a life sentence.",
+            "Your positive attitude is the best accessory.",
+            "You have a knack for turning ordinary moments into special ones.",
+            "You're the person everyone wants on their team.",
+            "You have the determination of a toddler with a cookie jar.",
+            "You make spreadsheets look exciting.",
+            "You’re definitely on the 'Nice' list this year.",
+            "You are proof that good things happen to good people.",
+            "Your memory is shockingly reliable.",
+            "You should be cloned, but only for good purposes.",
+            "You have fantastic posture.",
+            "You inspire me to be less lazy.",
+            "Your hair looks really good today.",
+            "You're the glue that holds things together.",
             "You bring out the best in others.",
-            "You are a true original."
+            "You are a stellar conversationalist.",
+            "You make even mundane tasks seem exciting.",
+            "You are more reliable than a sunrise.",
+            "You're a human Swiss Army knife of skills.",
+            "You are simply radiant.",
+            "You deserve all the snacks.",
+            "You are a powerhouse of potential.",
+            "You're the best thing since sliced bread.",
+            "You have an amazing moral compass.",
+            "You make complexity understandable.",
+            "Your integrity shines brighter than a diamond.",
+            "You look like you know how to build a fire with friction.",
+            "You are surprisingly good at that thing you tried once.",
+            "You could talk your way out of a paper bag.",
+            "You have the patience of a saint.",
+            "You are wonderfully eccentric.",
+            "You're not just smart, you're clever.",
+            "You deserve a break and a large cup of tea.",
+            "You're the reason someone is smiling today.",
+            "Your creative potential is limitless.",
+            "You're a champion of the small things.",
+            "You have a very comforting presence.",
+            "You're a beacon of common sense.",
+            "Your enthusiasm is beautiful.",
+            "You are an absolute delight.",
+            "You're stronger than you think you are.",
+            "You're doing a great job at life.",
+            "You have a heart of gold.",
+            "You're a breath of fresh air.",
+            "You make others feel safe.",
+            "You're smarter than you give yourself credit for.",
+            "You're a true original.",
+            "You have the best ideas.",
+            "Your resilience is inspiring.",
+            "You're a wonderful friend.",
+            "You're a natural leader.",
+            "Your kindness is your superpower.",
+            "You're very observant.",
+            "You've got great instincts.",
+            "You're a joy to be around.",
+            "You're incredibly thoughtful.",
+            "You're a great problem solver.",
+            "You're more than enough.",
+            "You're a bright spot in my day.",
+            "You have a great sense of style.",
+            "You're a hard worker.",
+            "You're very generous.",
+            "You're a good listener.",
+            "You're so brave.",
+            "You're very compassionate.",
+            "You have a wonderful imagination.",
+            "You're very reliable.",
+            "You're a great communicator.",
+            "You're very talented.",
+            "You're a ray of sunshine.",
+            "You're very creative.",
+            "You're a great teammate.",
+            "You're just plain awesome!"
         ];
 
-        // Function to get a random compliment from the array
-        function getRandomCompliment() {
-            // Generate a random index based on the array length
-            const randomIndex = Math.floor(Math.random() * compliments.length);
-            // Return the compliment at the random index
-            return compliments[randomIndex];
+        const jokes = [
+            { s: "Why don't scientists trust atoms?", p: "Because they make up everything!" },
+            { s: "What do you call a fake noodle?", p: "An Impasta!" },
+            { s: "Why did the scarecrow win an award?", p: "He was outstanding in his field!" },
+            { s: "What do you call a bear with no teeth?", p: "A gummy bear!" },
+            { s: "Why did the bicycle fall over?", p: "Because it was two-tired!" },
+            { s: "What do you call cheese that isn't yours?", p: "Nacho cheese!" },
+            { s: "Why can't a nose be 12 inches long?", p: "Because then it would be a foot!" },
+            { s: "What's orange and sounds like a parrot?", p: "A carrot!" },
+            { s: "Why did the math book look sad?", p: "Because it had too many problems!" },
+            { s: "What do you call a sleeping dinosaur?", p: "A dino-snore!" },
+            { s: "What did the ocean say to the beach?", p: "Nothing, it just waved!" },
+            { s: "How do you make a tissue dance?", p: "You put a little boogie in it!" },
+            { s: "What do you call a snowman with a six pack?", p: "An abdominal snowman!" },
+            { s: "Why was 6 afraid of 7?", p: "Because 7, 8, 9!" },
+            { s: "What do you call a magic dog?", p: "A Labracadabrador!" },
+            { s: "Why did the cookie go to the doctor?", p: "Because he was feeling crumb-y!" },
+            { s: "What did one plate say to the other?", p: "Lunch is on me!" },
+            { s: "Why are elevator jokes so good?", p: "They work on so many levels!" },
+            { s: "What did the stamp say to the envelope?", p: "Stick with me and we'll go places!" },
+            { s: "What do you call a cow with no legs?", p: "Ground beef!" },
+            { s: "What did the zero say to the eight?", p: "Nice belt!" },
+            { s: "Why did the student eat his homework?", p: "Because the teacher said it was a piece of cake!" },
+            { s: "How do you organize a space party?", p: "You planet!" },
+            { s: "What kind of shoes do ninjas wear?", p: "Sneakers!" },
+            { s: "What do you call a pile of kittens?", p: "A meow-ntain!" },
+            { s: "Why did the tomato turn red?", p: "Because it saw the salad dressing!" },
+            { s: "What falls but never hits the ground?", p: "The temperature!" },
+            { s: "What do you call a fish with no eyes?", p: "A fsh!" },
+            { s: "Why was the belt arrested?", p: "For holding up a pair of pants!" },
+            { s: "What's a skeleton's favorite snack?", p: "Ribs!" },
+            { s: "What do you call a funny mountain?", p: "Hill-arious!" },
+            { s: "What fruit do twins love?", p: "Pears!" },
+            { s: "How does a penguin build its house?", p: "Igloos it together!" },
+            { s: "Why did the mushroom go to the party?", p: "Because he was a fun-gi!" },
+            { s: "What did the sink say to the toilet?", p: "You look flushed!" },
+            { s: "Why can't you give Elsa a balloon?", p: "Because she'll let it go!" },
+            { s: "What do you call a duck that gets all A's?", p: "A wise quacker!" },
+            { s: "What's brown and sticky?", p: "A stick!" },
+            { s: "What did the grape do when he got stepped on?", p: "Nothing, he just let out a little wine!" },
+            { s: "Why are spiders such good swimmers?", p: "They have webbed feet!" },
+            { s: "What do you call a fly without wings?", p: "A walk!" },
+            { s: "Why are frogs so happy?", p: "They eat whatever bugs them!" },
+            { s: "What did the buffalo say to his son when he left?", p: "Bison!" },
+            { s: "Why did the man put his money in the freezer?", p: "He wanted cold hard cash!" },
+            { s: "What do you call a pig that knows karate?", p: "A pork chop!" },
+            { s: "What runs but has no legs?", p: "A refrigerator!" },
+            { s: "What's the best way to watch a fly fishing tournament?", p: "On the live-stream!" },
+            { s: "What did the pirate say on his 80th birthday?", p: "Aye-matey!" },
+            { s: "What do you call an alligator in a vest?", p: "An investigator!" },
+            { s: "Why are ghosts so bad at lying?", p: "Because you can see right through them!" }
+        ];
+
+        const suits = [
+            { icon: '⭐', color: '#FFD166' }, { icon: '💖', color: '#FF6B6B' },
+            { icon: '🍀', color: '#06D6A0' }, { icon: '☀', color: '#FF9F1C' },
+            { icon: '💎', color: '#118AB2' }, { icon: '🌙', color: '#073B4C' },
+            { icon: '🍎', color: '#EF476F' }, { icon: '🎈', color: '#FF6363' },
+            { icon: '🌈', color: '#8338EC' }, { icon: '🦄', color: '#FF006E' }
+        ];
+
+        let punchlineTimeout;
+
+        function updateSuits() {
+            const suit = suits[Math.floor(Math.random() * suits.length)];
+            const tr = document.getElementById('icon-tr');
+            const bl = document.getElementById('icon-bl');
+            tr.textContent = bl.textContent = suit.icon;
+            tr.style.backgroundColor = bl.style.backgroundColor = suit.color;
         }
 
-        // Function to update the compliment displayed on the screen with a fade transition
-        function displayNewCompliment() {
-            const displayElement = document.getElementById('compliment-display');
-            const button = document.getElementById('generate-btn');
+        function clearContent() {
+            document.getElementById('main-text').classList.add('fade-out');
+            document.getElementById('punchline').classList.remove('show');
+            clearTimeout(punchlineTimeout);
+        }
 
-            // Disable button during transition to prevent rapid clicks
-            button.disabled = true;
-
-            // 1. Fade out the current text (transition defined in CSS)
-            displayElement.classList.add('fade-out');
-
-            // Use a short delay to allow the fade-out transition to complete
+        function showContent(text, type, punchline = "") {
             setTimeout(() => {
-                // 2. Get a new random compliment
-                const newCompliment = getRandomCompliment();
+                const main = document.getElementById('main-text');
+                const pLine = document.getElementById('punchline');
+                document.getElementById('content-type').textContent = type;
+                main.textContent = text;
+                main.classList.remove('fade-out');
 
-                // 3. Update the text content while invisible
-                displayElement.textContent = newCompliment;
-
-                // 4. Fade the new text back in
-                displayElement.classList.remove('fade-out');
-                
-                // Re-enable the button after transition is complete
-                button.disabled = false;
-            }, 200); // 200ms matches the transition speed defined in the CSS
+                if (punchline) {
+                    pLine.textContent = punchline;
+                    punchlineTimeout = setTimeout(() => {
+                        pLine.classList.add('show');
+                    }, 2500);
+                } else {
+                    pLine.textContent = "";
+                }
+            }, 300);
         }
 
-        // Wait until the entire HTML document is fully loaded before attaching listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            // Get the button element
-            const button = document.getElementById('generate-btn');
-
-            // Attach the click event listener to the button
-            button.addEventListener('click', displayNewCompliment);
-
-            // Display an initial random compliment when the page loads
-            displayNewCompliment();
+        document.getElementById('btn-compliment').addEventListener('click', () => {
+            clearContent();
+            updateSuits();
+            const text = compliments[Math.floor(Math.random() * compliments.length)];
+            showContent(text, "Compliment");
         });
 
+        document.getElementById('btn-joke').addEventListener('click', () => {
+            clearContent();
+            updateSuits();
+            const joke = jokes[Math.floor(Math.random() * jokes.length)];
+            showContent(joke.s, "Joke", joke.p);
+        });
+
+        // Background bubble generator
+        function createBubbles() {
+            const container = document.getElementById('bubbles');
+            for(let i=0; i<15; i++) {
+                const b = document.createElement('div');
+                b.className = 'bubble';
+                const size = Math.random() * 60 + 20 + 'px';
+                b.style.width = size;
+                b.style.height = size;
+                b.style.left = Math.random() * 100 + '%';
+                b.style.animationDelay = Math.random() * 10 + 's';
+                b.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(b);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createBubbles();
+            updateSuits();
+        });
     </script>
 </body>
 </html>
