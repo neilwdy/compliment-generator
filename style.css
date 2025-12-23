@@ -1,0 +1,182 @@
+ <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-color: #212529;
+            --accent-coral: #FF6B6B;
+            --accent-blue: #457B9D;
+            --font-ui: 'Lato', sans-serif;
+            --font-display: 'Nunito', sans-serif;
+            --card-width: 350px;
+            --card-height: 490px; /* Standard playing card ratio approx 2.5 x 3.5 */
+        }
+
+        /* Night Sky Background with Stars */
+        body {
+            background-color: #050505;
+            background-image: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: var(--font-ui);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Container for the starry background */
+        .bg-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        /* Individual Star Styling */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Playing Card Styling */
+        .card-container {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-bottom: 30px;
+            user-select: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-container:hover {
+            transform: scale(1.02) rotate(1deg);
+        }
+
+        /* Corner "Suits" */
+        .corner-icon {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+        }
+
+        .top-right { top: 15px; right: 15px; }
+        .bottom-left { bottom: 15px; left: 15px; transform: rotate(180deg); }
+
+        /* Content Area */
+        #content-area {
+            text-align: center;
+            padding: 40px 20px;
+            width: 100%;
+        }
+
+        .type-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #888;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        #main-text {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-color);
+            line-height: 1.3;
+            transition: opacity 0.3s ease;
+        }
+
+        #punchline {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--accent-blue);
+            font-weight: 700;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.5s ease;
+        }
+
+        #punchline.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Button Controls (Outside the card) */
+        .controls {
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .btn {
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-compliment { background-color: var(--accent-coral); }
+        .btn-joke { background-color: var(--accent-blue); }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            filter: brightness(1.1);
+        }
+
+        .btn:active { transform: translateY(0); }
+
+        .fade-out { opacity: 0; }
+
+        @media (max-width: 400px) {
+            :root {
+                --card-width: 280px;
+                --card-height: 400px;
+            }
+            .controls { flex-direction: column; width: 100%; max-width: 280px; }
+            #main-text { font-size: 1.3rem; }
+        }
+    </style>
